@@ -1,90 +1,177 @@
 package com.br.servicodolar.servicerequest;
 
-import com.br.servicodolar.servicerequest.domain.entity.Order;
+import com.br.servicodolar.servicerequest.domain.entity.OrderBuilder;
+import com.br.servicodolar.servicerequest.domain.entity.Schedule;
+import com.br.servicodolar.servicerequest.domain.entity.StatusOrder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class OrderTest {
 
 
     @Test
-    void shouldThrowExceptionWhenCostumerNotFounded() {
+    void shouldThrowExceptionWhenInvalidCostumer() {
 
-        var newOrder = new Order();
+        OrderBuilder orderBuilder = new OrderBuilder();
+        orderBuilder.setCostumerId(-1L)
+                    .setServiceProviderId(2L)
+                    .setServiceId(3L)
+                    .setStatusOrder(StatusOrder.ABERTO)
+                    .setYear(2023)
+                    .setOpeningDate(LocalDate.of(2023, 6, 26))
+                    .setTotalServiceCost(1000.20)
+                    .setSchedule(new Schedule(LocalDate.of(2023, 6, 26), LocalTime.of(8,0), LocalDate.of(2023, 6, 26), LocalTime.of(9,0)))
+                    .setUpdatedDateTime(LocalDateTime.now());
 
-        Assertions.assertThrows(RuntimeException.class,
-                () -> newOrder.setCostumerId(-1L));
+        var message = Assertions.assertThrows(RuntimeException.class, () -> orderBuilder.createOrder()).getMessage();
+        Assertions.assertEquals("Código do cliente inválido.", message);
     }
 
     @Test
-    void shouldThrowExceptionWhenServiceProviderNotFounded() {
+    void shouldThrowExceptionWhenInvalidServiceProvider() {
 
-        var newOrder = new Order();
+        OrderBuilder orderBuilder = new OrderBuilder();
+        orderBuilder.setCostumerId(1L)
+                    .setServiceProviderId(-2L)
+                    .setServiceId(3L)
+                    .setStatusOrder(StatusOrder.ABERTO)
+                    .setYear(2023)
+                    .setOpeningDate(LocalDate.of(2023, 6, 26))
+                    .setTotalServiceCost(1000.20)
+                    .setSchedule(new Schedule(LocalDate.of(2023, 6, 26), LocalTime.of(8,0), LocalDate.of(2023, 6, 26), LocalTime.of(9,0)))
+                    .setUpdatedDateTime(LocalDateTime.now());
 
-        Assertions.assertThrows(RuntimeException.class,
-                () -> newOrder.setServiceProviderId(-1L));
+        String message = Assertions.assertThrows(RuntimeException.class, () -> orderBuilder.createOrder()).getMessage();
+        Assertions.assertEquals("Códido do prestador inválido.", message);
     }
 
     @Test
-    void shouldThrowExceptionWhenServiceNotFounded() {
+    void shouldThrowExceptionWhenInvalidService() {
 
-        var newOrder = new Order();
+        OrderBuilder orderBuilder = new OrderBuilder();
+        orderBuilder.setCostumerId(1L)
+                    .setServiceProviderId(2L)
+                    .setServiceId(-3L)
+                    .setStatusOrder(StatusOrder.ABERTO)
+                    .setYear(2023)
+                    .setOpeningDate(LocalDate.of(2023, 6, 26))
+                    .setTotalServiceCost(1000.20)
+                    .setSchedule(new Schedule(LocalDate.of(2023, 6, 26), LocalTime.of(8,0), LocalDate.of(2023, 6, 26), LocalTime.of(9,0)))
+                    .setUpdatedDateTime(LocalDateTime.now());
 
-        Assertions.assertThrows(RuntimeException.class,
-                () -> newOrder.setServiceId(-1L));
+        String message = Assertions.assertThrows(RuntimeException.class, () -> orderBuilder.createOrder()).getMessage();
+        Assertions.assertEquals("Código do serviço inválido.", message);
     }
 
     @Test
-    void shouldThrowExceptionWhenStatusOrderIsNull() {
+    void shouldThrowExceptionWhenInvalidStatusOrder() {
 
-        var newOrder = new Order();
+        OrderBuilder orderBuilder = new OrderBuilder();
+        orderBuilder.setCostumerId(1L)
+                    .setServiceProviderId(2L)
+                    .setServiceId(3L)
+                    .setStatusOrder(null)
+                    .setYear(2023)
+                    .setOpeningDate(LocalDate.of(2023, 6, 26))
+                    .setTotalServiceCost(1000.20)
+                    .setSchedule(new Schedule(LocalDate.of(2023, 6, 26), LocalTime.of(8,0), LocalDate.of(2023, 6, 26), LocalTime.of(9,0)))
+                    .setUpdatedDateTime(LocalDateTime.now());
 
-        Assertions.assertThrows(RuntimeException.class,
-                () -> newOrder.setStatusOrder(null));
+        String message = Assertions.assertThrows(RuntimeException.class, () -> orderBuilder.createOrder()).getMessage();
+        Assertions.assertEquals("Status não pode ser nulo.", message);
     }
 
     @Test
-    void shouldThrowExceptionWhenYearEqualZero() {
+    void shouldThrowExceptionWhenInvalidYear() {
 
-        var newOrder = new Order();
+        OrderBuilder orderBuilder = new OrderBuilder();
+        orderBuilder.setCostumerId(1L)
+                    .setServiceProviderId(2L)
+                    .setServiceId(3L)
+                    .setStatusOrder(StatusOrder.ABERTO)
+                    .setYear(-2023)
+                    .setOpeningDate(LocalDate.of(2023, 6, 26))
+                    .setTotalServiceCost(1000.20)
+                    .setSchedule(new Schedule(LocalDate.of(2023, 6, 26), LocalTime.of(8,0), LocalDate.of(2023, 6, 26), LocalTime.of(9,0)))
+                    .setUpdatedDateTime(LocalDateTime.now());
 
-        Assertions.assertThrows(RuntimeException.class,
-                () -> newOrder.setYear(0));
+        String message = Assertions.assertThrows(RuntimeException.class, () -> orderBuilder.createOrder()).getMessage();
+        Assertions.assertEquals("O valor de ano tem que ser maior igual a zero.", message);
     }
 
     @Test
-    void shouldThrowExceptionWhenOpeningDateIsNull() {
+    void shouldThrowExceptionWhenInvalidOpeningDate() {
 
-        var newOrder = new Order();
+        OrderBuilder orderBuilder = new OrderBuilder();
+        orderBuilder.setCostumerId(1L)
+                .setServiceProviderId(2L)
+                .setServiceId(3L)
+                .setStatusOrder(StatusOrder.ABERTO)
+                .setYear(2023)
+                .setOpeningDate(null)
+                .setTotalServiceCost(1000.20)
+                .setSchedule(new Schedule(LocalDate.of(2023, 6, 26), LocalTime.of(8,0), LocalDate.of(2023, 6, 26), LocalTime.of(9,0)))
+                .setUpdatedDateTime(LocalDateTime.now());
 
-        Assertions.assertThrows(RuntimeException.class,
-                () -> newOrder.setOpeningDate(null));
+        String message = Assertions.assertThrows(RuntimeException.class, () -> orderBuilder.createOrder()).getMessage();
+        Assertions.assertEquals("A data de abertura não pode ser nulo.", message);
     }
 
     @Test
-    void shouldThrowExceptionWhenTotalCostEqualZero() {
+    void shouldThrowExceptionWhenInvalidTotalCost() {
 
-        var newOrder = new Order();
+        OrderBuilder orderBuilder = new OrderBuilder();
+        orderBuilder.setCostumerId(1L)
+                .setServiceProviderId(2L)
+                .setServiceId(3L)
+                .setStatusOrder(StatusOrder.ABERTO)
+                .setYear(2023)
+                .setOpeningDate(LocalDate.of(2023, 6, 26))
+                .setTotalServiceCost(-1000.20)
+                .setSchedule(new Schedule(LocalDate.of(2023, 6, 26), LocalTime.of(8,0), LocalDate.of(2023, 6, 26), LocalTime.of(9,0)))
+                .setUpdatedDateTime(LocalDateTime.now());
 
-        Assertions.assertThrows(RuntimeException.class,
-                () -> newOrder.setTotalServiceCost(0.0));
+        String message = Assertions.assertThrows(RuntimeException.class, () -> orderBuilder.createOrder()).getMessage();
+        Assertions.assertEquals("O valor total tem que ser maior igual a zero.", message);
     }
 
     @Test
-    void shouldThrowExceptionWhenScheduleIsNull() {
+    void shouldThrowExceptionWhenInvalidSchedule() {
 
-        var newOrder = new Order();
+        OrderBuilder orderBuilder = new OrderBuilder();
+        orderBuilder.setCostumerId(1L)
+                .setServiceProviderId(2L)
+                .setServiceId(3L)
+                .setStatusOrder(StatusOrder.ABERTO)
+                .setYear(2023)
+                .setOpeningDate(LocalDate.of(2023, 6, 26))
+                .setTotalServiceCost(1000.20)
+                .setSchedule(null)
+                .setUpdatedDateTime(LocalDateTime.now());
 
-        Assertions.assertThrows(RuntimeException.class,
-                () -> newOrder.setSchedule(null));
+        String message = Assertions.assertThrows(RuntimeException.class, () -> orderBuilder.createOrder()).getMessage();
+        Assertions.assertEquals("A agenda não pode ser nulo.", message);
     }
 
     @Test
     void shouldThrowExceptionWhenUpdatedDateTimeIsNull() {
 
-        var newOrder = new Order();
+        OrderBuilder orderBuilder = new OrderBuilder();
+        orderBuilder.setCostumerId(1L)
+                .setServiceProviderId(2L)
+                .setServiceId(3L)
+                .setStatusOrder(StatusOrder.ABERTO)
+                .setYear(2023)
+                .setOpeningDate(LocalDate.of(2023, 6, 26))
+                .setTotalServiceCost(1000.20)
+                .setSchedule(new Schedule(LocalDate.of(2023, 6, 26), LocalTime.of(8,0), LocalDate.of(2023, 6, 26), LocalTime.of(9,0)))
+                .setUpdatedDateTime(null);
 
-        Assertions.assertThrows(RuntimeException.class,
-                () -> newOrder.setUpdatedDateTime(null));
+        String message = Assertions.assertThrows(RuntimeException.class, () -> orderBuilder.createOrder()).getMessage();
+        Assertions.assertEquals("A data de atualização não pode ser nulo.", message);
     }
 }

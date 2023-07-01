@@ -5,6 +5,7 @@ import com.br.servicodolar.servicerequest.domain.ValidationInDBForCostumer;
 import com.br.servicodolar.servicerequest.domain.ValidationInDBForServiceProvider;
 import com.br.servicodolar.servicerequest.domain.ValidationScheduleInDB;
 import com.br.servicodolar.servicerequest.domain.entity.Order;
+import com.br.servicodolar.servicerequest.domain.entity.OrderBuilder;
 import com.br.servicodolar.servicerequest.domain.entity.Schedule;
 import com.br.servicodolar.servicerequest.domain.entity.StatusOrder;
 import org.junit.jupiter.api.Assertions;
@@ -25,33 +26,35 @@ public class ValidationInDBTest {
     @BeforeEach
     void createScheduleList() {
 
-        var order = new Order();
-        order.setCostumerId(1L);
-        order.setServiceProviderId(2L);
-        order.setServiceId(3L);
-        order.setStatusOrder(StatusOrder.ABERTO);
-        order.setYear(2023);
-        order.setOpeningDate(LocalDate.of(2023, 6, 26));
-        order.setTotalServiceCost(1000.20);
-        order.setSchedule(new Schedule(LocalDate.now(), LocalTime.of(8,0), LocalDate.now(), LocalTime.of(9,0)));
-        order.setUpdatedDateTime(LocalDateTime.now());
+        var orderBuilder = new OrderBuilder();
+        orderBuilder.setCostumerId(1L)
+                    .setServiceProviderId(2L)
+                    .setServiceId(3L)
+                    .setStatusOrder(StatusOrder.ABERTO)
+                    .setYear(2023)
+                    .setOpeningDate(LocalDate.of(2023, 6, 26))
+                    .setTotalServiceCost(1000.20)
+                    .setSchedule(new Schedule(LocalDate.now(), LocalTime.of(8,0), LocalDate.now(), LocalTime.of(9,0)))
+                    .setUpdatedDateTime(LocalDateTime.now());
 
-        this.orderList = List.of(order);
+        this.orderList = List.of(orderBuilder.createOrder());
     }
 
     @Test
     void shouldThrowExceptionWhenSameServiceAlreadyExists() {
 
-        Order newOrder = new Order();
-        newOrder.setCostumerId(1L);
-        newOrder.setServiceProviderId(2L);
-        newOrder.setServiceId(3L);
-        newOrder.setStatusOrder(StatusOrder.ABERTO);
-        newOrder.setYear(2023);
-        newOrder.setOpeningDate(LocalDate.of(2023, 6, 26));
-        newOrder.setTotalServiceCost(1000.20);
-        newOrder.setSchedule(new Schedule(LocalDate.now(), LocalTime.of(8,0), LocalDate.now(), LocalTime.of(9,0)));
-        newOrder.setUpdatedDateTime(LocalDateTime.now());
+        OrderBuilder orderBuilder = new OrderBuilder();
+        orderBuilder.setCostumerId(1L)
+                    .setServiceProviderId(2L)
+                    .setServiceId(3L)
+                    .setStatusOrder(StatusOrder.ABERTO)
+                    .setYear(2023)
+                    .setOpeningDate(LocalDate.of(2023, 6, 26))
+                    .setTotalServiceCost(1000.20)
+                    .setSchedule(new Schedule(LocalDate.now(), LocalTime.of(8,0), LocalDate.now(), LocalTime.of(9,0)))
+                    .setUpdatedDateTime(LocalDateTime.now());
+
+        Order newOrder = orderBuilder.createOrder();
 
         Assertions.assertThrows(RuntimeException.class,
                 () -> new ValidationInDBForCostumer(this.orderList).validateIfServiceExistInDataBase(newOrder));

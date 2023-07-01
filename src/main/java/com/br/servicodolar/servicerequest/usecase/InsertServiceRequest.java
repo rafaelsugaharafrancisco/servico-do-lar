@@ -5,6 +5,7 @@ import com.br.servicodolar.servicerequest.client.ServiceAPI;
 import com.br.servicodolar.servicerequest.client.ServiceProviderAPI;
 import com.br.servicodolar.servicerequest.domain.*;
 import com.br.servicodolar.servicerequest.domain.entity.Order;
+import com.br.servicodolar.servicerequest.domain.entity.OrderBuilder;
 import com.br.servicodolar.servicerequest.domain.entity.Schedule;
 import com.br.servicodolar.servicerequest.domain.entity.StatusOrder;
 import com.br.servicodolar.servicerequest.repository.OrderRepository;
@@ -72,18 +73,18 @@ public class InsertServiceRequest {
 
         double totalCost = new CostCalculator().execute(this.serviceAPI, dto.serviceId());
 
-        var order = new Order();
-        order.setCostumerId(dto.costumerId());
-        order.setServiceProviderId(dto.serviceProviderId());
-        order.setServiceId(dto.serviceId());
-        order.setStatusOrder(StatusOrder.ABERTO);
-        order.setYear(LocalDate.now().getYear());
-        order.setOpeningDate(LocalDate.now());
-        order.setSchedule(new Schedule(dto.serviceStarDate(), dto.serviceStartTime(), dto.serviceFinishDate(), dto.serviceFinishTime()));
-        order.setTotalServiceCost(totalCost);
-        order.setUpdatedDateTime(LocalDateTime.now());
+        var orderBuilder = new OrderBuilder();
+        orderBuilder.setCostumerId(dto.costumerId())
+                    .setServiceProviderId(dto.serviceProviderId())
+                    .setServiceId(dto.serviceId())
+                    .setStatusOrder(StatusOrder.ABERTO)
+                    .setYear(LocalDate.now().getYear())
+                    .setOpeningDate(LocalDate.now())
+                    .setSchedule(new Schedule(dto.serviceStarDate(), dto.serviceStartTime(), dto.serviceFinishDate(), dto.serviceFinishTime()))
+                    .setTotalServiceCost(totalCost)
+                    .setUpdatedDateTime(LocalDateTime.now());
 
-        return order;
+        return orderBuilder.createOrder();
     }
 
 }

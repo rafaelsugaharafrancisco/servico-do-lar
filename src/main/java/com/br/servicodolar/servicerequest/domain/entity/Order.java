@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -45,7 +44,36 @@ public class Order {
     @Column(name = "updated_date_time")
     private LocalDateTime updatedDateTime;
 
-    public void setCostumerId(Long costumerId) {
+    public Order(Long costumerId,
+                 Long serviceProviderId,
+                 Long serviceId,
+                 StatusOrder statusOrder,
+                 Integer year,
+                 LocalDate openingDate,
+                 Double totalServiceCost,
+                 Schedule schedule,
+                 LocalDateTime updatedDateTime) {
+        this.validateCostumerId(costumerId);
+        this.validateServiceProviderId(serviceProviderId);
+        this.validateServiceId(serviceId);
+        this.validateStatusOrder(statusOrder);
+        this.validateYear(year);
+        this.validateOpeningDate(openingDate);
+        this.validateTotalServiceCost(totalServiceCost);
+        this.validateSchedule(schedule);
+        this.validateUpdatedDateTime(updatedDateTime);
+        this.costumerId = costumerId;
+        this.serviceProviderId = serviceProviderId;
+        this.serviceId = serviceId;
+        this.statusOrder = statusOrder;
+        this.year = year;
+        this.openingDate = openingDate;
+        this.totalServiceCost = totalServiceCost;
+        this.schedule = schedule;
+        this.updatedDateTime = updatedDateTime;
+    }
+
+    private void validateCostumerId(Long costumerId) {
 
         if (costumerId <= 0)
             throw new RuntimeException("Código do cliente inválido.");
@@ -53,15 +81,15 @@ public class Order {
         this.costumerId = costumerId;
     }
 
-    public void setServiceProviderId(Long serviceProviderId) {
+    private void validateServiceProviderId(Long serviceProviderId) {
 
         if (serviceProviderId <= 0)
-            throw new RuntimeException("Códgido do prestador inválido.");
+            throw new RuntimeException("Códido do prestador inválido.");
 
         this.serviceProviderId = serviceProviderId;
     }
 
-    public void setServiceId(Long serviceId) {
+    private void validateServiceId(Long serviceId) {
 
         if (serviceId <= 0)
             throw new RuntimeException("Código do serviço inválido.");
@@ -69,42 +97,42 @@ public class Order {
         this.serviceId = serviceId;
     }
 
-    public void setStatusOrder(StatusOrder statusOrder) {
+    private void validateStatusOrder(StatusOrder statusOrder) {
         if (statusOrder == null)
             throw new RuntimeException("Status não pode ser nulo.");
 
         this.statusOrder = statusOrder;
     }
 
-    public void setYear(Integer year) {
+    private void validateYear(Integer year) {
         if (year <= 0)
             throw new RuntimeException("O valor de ano tem que ser maior igual a zero.");
 
         this.year = year;
     }
 
-    public void setOpeningDate(LocalDate openingDate) {
+    private void validateOpeningDate(LocalDate openingDate) {
         if (openingDate == null)
             throw new RuntimeException("A data de abertura não pode ser nulo.");
 
         this.openingDate = openingDate;
     }
 
-    public void setTotalServiceCost(Double totalServiceCost) {
+    private void validateTotalServiceCost(Double totalServiceCost) {
         if (totalServiceCost <= 0)
             throw new RuntimeException("O valor total tem que ser maior igual a zero.");
 
         this.totalServiceCost = totalServiceCost;
     }
 
-    public void setSchedule(Schedule schedule) {
+    private void validateSchedule(Schedule schedule) {
         if (schedule == null)
             throw new RuntimeException("A agenda não pode ser nulo.");
 
         this.schedule = schedule;
     }
 
-    public void setUpdatedDateTime(LocalDateTime updatedDateTime) {
+    private void validateUpdatedDateTime(LocalDateTime updatedDateTime) {
         if (updatedDateTime == null)
             throw new RuntimeException("A data de atualização não pode ser nulo.");
 

@@ -6,6 +6,8 @@ import com.br.servicodolar.servicerequest.client.ServiceAPI;
 import com.br.servicodolar.servicerequest.client.ServiceProviderAPI;
 import com.br.servicodolar.servicerequest.client.model.ServiceDTO;
 import com.br.servicodolar.servicerequest.domain.entity.Order;
+import com.br.servicodolar.servicerequest.domain.entity.OrderBuilder;
+import com.br.servicodolar.servicerequest.domain.entity.Schedule;
 import com.br.servicodolar.servicerequest.domain.entity.StatusOrder;
 import com.br.servicodolar.servicerequest.repository.OrderRepository;
 import com.br.servicodolar.servicerequest.usecase.InsertServiceRequest;
@@ -16,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Optional;
@@ -47,13 +50,24 @@ public class InsertServiceRequestTest {
                 LocalDate.now(),
                 LocalTime.of(9,0));
 
+        var orderBuilder = new OrderBuilder();
+        orderBuilder.setCostumerId(dto.costumerId())
+                .setServiceProviderId(dto.serviceProviderId())
+                .setServiceId(dto.serviceId())
+                .setStatusOrder(StatusOrder.ABERTO)
+                .setYear(2023)
+                .setOpeningDate(LocalDate.of(2023, 6, 26))
+                .setTotalServiceCost(1000.20)
+                .setSchedule(new Schedule(LocalDate.now(), LocalTime.of(8,0), LocalDate.now(), LocalTime.of(9,0)))
+                .setUpdatedDateTime(LocalDateTime.now());
+
         Mockito.when(orderRepository.findAllByYearAndCostumerId(2023, 1l)).thenReturn(Collections.emptyList());
         Mockito.when(orderRepository.findAllByYearAndServiceProviderId(2023, 2l)).thenReturn(Collections.emptyList());
         Mockito.when(costumerAPI.activeCostumerExists(1l)).thenReturn(true);
         Mockito.when(serviceProviderAPI.activeServiceProviderExists(2l)).thenReturn(true);
         Mockito.when(serviceAPI.serviceExists(3l)).thenReturn(true);
         Mockito.when(serviceAPI.getOneService(3l)).thenReturn(Optional.of(new ServiceDTO(1l, "Trocar torneira", 1.5)));
-        Mockito.when(orderRepository.save(Mockito.any(Order.class))).thenReturn(new Order());
+        Mockito.when(orderRepository.save(Mockito.any(Order.class))).thenReturn(orderBuilder.createOrder());
 
         new InsertServiceRequest(costumerAPI, orderRepository, serviceAPI, serviceProviderAPI).execute(dto);
         Mockito.verify(orderRepository).findAllByYearAndCostumerId(Mockito.anyInt(), Mockito.anyLong());
