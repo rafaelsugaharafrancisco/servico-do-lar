@@ -9,11 +9,13 @@ import com.br.servicodolar.orderofservice.domain.entity.Schedule;
 import com.br.servicodolar.orderofservice.domain.entity.StatusOrder;
 import com.br.servicodolar.orderofservice.repository.OrderRepository;
 import com.br.servicodolar.orderofservice.usecase.model.OrderOfServiceDTO;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Service
 public class InsertOrderOfService {
 
     private CostumerAPI costumerAPI;
