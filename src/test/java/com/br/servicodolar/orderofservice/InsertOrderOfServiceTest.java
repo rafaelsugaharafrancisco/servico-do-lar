@@ -4,6 +4,7 @@ package com.br.servicodolar.orderofservice;
 import com.br.servicodolar.orderofservice.client.CostumerAPI;
 import com.br.servicodolar.orderofservice.client.ServiceAPI;
 import com.br.servicodolar.orderofservice.client.ServiceProviderAPI;
+import com.br.servicodolar.orderofservice.client.model.ServiceDTO;
 import com.br.servicodolar.orderofservice.domain.ValidationInDBForCostumer;
 import com.br.servicodolar.orderofservice.domain.ValidationInDBForServiceProvider;
 import com.br.servicodolar.orderofservice.domain.ValidationScheduleInDB;
@@ -26,6 +27,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootTest
 public class InsertOrderOfServiceTest {
@@ -49,7 +51,6 @@ public class InsertOrderOfServiceTest {
                 2l,
                 3l,
                 StatusOrder.ABERTO,
-                100.0,
                 LocalDate.now(),
                 LocalTime.of(8,0),
                 LocalDate.now(),
@@ -60,6 +61,7 @@ public class InsertOrderOfServiceTest {
         Mockito.when(costumerAPI.activeCostumerExists(1l)).thenReturn(true);
         Mockito.when(serviceProviderAPI.activeServiceProviderExists(2l)).thenReturn(true);
         Mockito.when(serviceAPI.serviceExists(3l)).thenReturn(true);
+        Mockito.when(serviceAPI.getOneService(3l)).thenReturn(Optional.of(new ServiceDTO(1l, "Trocar torneira", 1.5)));
         Mockito.when(orderRepository.save(Mockito.any(Order.class))).thenReturn(new Order());
 
         new InsertOrderOfService(costumerAPI, orderRepository, serviceAPI, serviceProviderAPI).execute(dto);

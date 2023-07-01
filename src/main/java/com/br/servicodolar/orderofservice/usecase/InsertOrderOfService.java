@@ -31,9 +31,9 @@ public class InsertOrderOfService {
 
     public Order execute(OrderOfServiceDTO dto) {
 
-        Order order = getOrder(dto);
+        validateInAPI(dto);
 
-        validateInAPI(order);
+        Order order = getOrder(dto);
 
         validateInDB(order);
 
@@ -55,18 +55,21 @@ public class InsertOrderOfService {
         validationInDB.validateIfDateTimeOfServiceExistInDB(order, validationSchedule);
     }
 
-    private void validateInAPI(Order order) {
+    private void validateInAPI(OrderOfServiceDTO dto) {
         ValidationInAPI validationInAPI  = new ValidationInAPIForCostumer(costumerAPI);
-        validationInAPI.validateIfExistWithAPI(order.getCostumerId());
+        validationInAPI.validateIfExistWithAPI(dto.costumerId());
 
         validationInAPI = new ValidationInAPIForService(serviceAPI);
-        validationInAPI.validateIfExistWithAPI(order.getServiceId());
+        validationInAPI.validateIfExistWithAPI(dto.serviceId());
 
         validationInAPI = new ValidationInAPIForServiceProvider(serviceProviderAPI);
-        validationInAPI.validateIfExistWithAPI(order.getServiceProviderId());
+        validationInAPI.validateIfExistWithAPI(dto.serviceProviderId());
     }
 
-    private static Order getOrder(OrderOfServiceDTO dto) {
+    private Order getOrder(OrderOfServiceDTO dto) {
+
+        double totalCost = new CostCalculator().execute(this.serviceAPI, dto.serviceId());
+
         var order = new Order();
         order.setCostumerId(dto.costumerId());
         order.setServiceProviderId(dto.serviceProviderId());
@@ -75,7 +78,7 @@ public class InsertOrderOfService {
         order.setYear(LocalDate.now().getYear());
         order.setOpeningDate(LocalDate.now());
         order.setSchedule(new Schedule(dto.serviceStarDate(), dto.serviceStartTime(), dto.serviceFinishDate(), dto.serviceFinishTime()));
-        order.setTotalServiceCost(100.25);
+        order.setTotalServiceCost(totalCost);
         order.setUpdatedDateTime(LocalDateTime.now());
 
         return order;

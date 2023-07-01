@@ -10,7 +10,6 @@ public record OrderOfServiceDTO(
         long serviceProviderId,
         long serviceId,
         StatusOrder statusOrder,
-        double totalServiceCost,
         LocalDate serviceStarDate,
         LocalTime serviceStartTime,
         LocalDate serviceFinishDate,
