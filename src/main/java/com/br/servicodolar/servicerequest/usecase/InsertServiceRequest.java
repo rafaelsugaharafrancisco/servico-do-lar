@@ -8,7 +8,7 @@ import com.br.servicodolar.servicerequest.domain.entity.Order;
 import com.br.servicodolar.servicerequest.domain.entity.Schedule;
 import com.br.servicodolar.servicerequest.domain.entity.StatusOrder;
 import com.br.servicodolar.servicerequest.repository.OrderRepository;
-import com.br.servicodolar.servicerequest.usecase.model.OrderOfServiceDTO;
+import com.br.servicodolar.servicerequest.usecase.model.OrderDTO;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class InsertOrderOfService {
+public class InsertServiceRequest {
 
     private CostumerAPI costumerAPI;
 
@@ -24,14 +24,14 @@ public class InsertOrderOfService {
     private ServiceAPI serviceAPI;
     private ServiceProviderAPI serviceProviderAPI;
 
-    public InsertOrderOfService(CostumerAPI costumerAPI, OrderRepository orderRepository, ServiceAPI serviceAPI, ServiceProviderAPI serviceProviderAPI) {
+    public InsertServiceRequest(CostumerAPI costumerAPI, OrderRepository orderRepository, ServiceAPI serviceAPI, ServiceProviderAPI serviceProviderAPI) {
         this.costumerAPI = costumerAPI;
         this.orderRepository = orderRepository;
         this.serviceAPI = serviceAPI;
         this.serviceProviderAPI = serviceProviderAPI;
     }
 
-    public Order execute(OrderOfServiceDTO dto) {
+    public Order execute(OrderDTO dto) {
 
         validateInAPI(dto);
 
@@ -57,7 +57,7 @@ public class InsertOrderOfService {
         validationInDB.validateIfDateTimeOfServiceExistInDB(order, validationSchedule);
     }
 
-    private void validateInAPI(OrderOfServiceDTO dto) {
+    private void validateInAPI(OrderDTO dto) {
         ValidationInAPI validationInAPI  = new ValidationInAPIForCostumer(costumerAPI);
         validationInAPI.validateIfExistWithAPI(dto.costumerId());
 
@@ -68,7 +68,7 @@ public class InsertOrderOfService {
         validationInAPI.validateIfExistWithAPI(dto.serviceProviderId());
     }
 
-    private Order getOrder(OrderOfServiceDTO dto) {
+    private Order getOrder(OrderDTO dto) {
 
         double totalCost = new CostCalculator().execute(this.serviceAPI, dto.serviceId());
 

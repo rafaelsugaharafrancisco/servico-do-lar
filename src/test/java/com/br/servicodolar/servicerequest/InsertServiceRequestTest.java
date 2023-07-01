@@ -8,8 +8,8 @@ import com.br.servicodolar.servicerequest.client.model.ServiceDTO;
 import com.br.servicodolar.servicerequest.domain.entity.Order;
 import com.br.servicodolar.servicerequest.domain.entity.StatusOrder;
 import com.br.servicodolar.servicerequest.repository.OrderRepository;
-import com.br.servicodolar.servicerequest.usecase.InsertOrderOfService;
-import com.br.servicodolar.servicerequest.usecase.model.OrderOfServiceDTO;
+import com.br.servicodolar.servicerequest.usecase.InsertServiceRequest;
+import com.br.servicodolar.servicerequest.usecase.model.OrderDTO;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 @SpringBootTest
-public class InsertOrderOfServiceTest {
+public class InsertServiceRequestTest {
 
     @MockBean
     private CostumerAPI costumerAPI;
@@ -38,7 +38,7 @@ public class InsertOrderOfServiceTest {
     @Test
     void test() {
 
-        var dto = new OrderOfServiceDTO(1l,
+        var dto = new OrderDTO(1l,
                 2l,
                 3l,
                 StatusOrder.ABERTO,
@@ -55,7 +55,7 @@ public class InsertOrderOfServiceTest {
         Mockito.when(serviceAPI.getOneService(3l)).thenReturn(Optional.of(new ServiceDTO(1l, "Trocar torneira", 1.5)));
         Mockito.when(orderRepository.save(Mockito.any(Order.class))).thenReturn(new Order());
 
-        new InsertOrderOfService(costumerAPI, orderRepository, serviceAPI, serviceProviderAPI).execute(dto);
+        new InsertServiceRequest(costumerAPI, orderRepository, serviceAPI, serviceProviderAPI).execute(dto);
         Mockito.verify(orderRepository).findAllByYearAndCostumerId(Mockito.anyInt(), Mockito.anyLong());
         Mockito.verify(orderRepository).findAllByYearAndServiceProviderId(Mockito.anyInt(), Mockito.anyLong());
         Mockito.verify(costumerAPI).activeCostumerExists(Mockito.anyLong());

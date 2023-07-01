@@ -5,7 +5,7 @@ import com.br.servicodolar.servicerequest.domain.entity.StatusOrder;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public record OrderOfServiceDTO(
+public record OrderDTO(
         long costumerId,
         long serviceProviderId,
         long serviceId,

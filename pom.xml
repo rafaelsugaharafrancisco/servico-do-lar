@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.br.servico-do-lar</groupId>
-	<artifactId>scheduling</artifactId>
+	<artifactId>service-request</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>serviceRequest</name>
+	<name>service-request</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
