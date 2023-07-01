@@ -12,7 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/order-of-service")
+@RequestMapping("/orders-of-service")
 public class OrderOfServiceController {
 
     private InsertOrderOfService insertOrderOfService;
