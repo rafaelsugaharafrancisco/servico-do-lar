@@ -1,5 +1,7 @@
 package com.br.servicodolar.orderofservice.domain.entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import lombok.Getter;
 
 import java.time.DayOfWeek;
@@ -7,11 +9,16 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Getter
+@Embeddable
 public class Schedule {
 
+    @Column(name = "start_date", nullable = false)
     private final LocalDate serviceStartDate;
+    @Column(name = "start_time", nullable = false)
     private final LocalTime serviceStartTime;
+    @Column(name = "finish_date", nullable = false)
     private final LocalDate serviceFinishDate;
+    @Column(name = "finish_time", nullable = false)
     private final LocalTime serviceFinishTime;
 
     public Schedule(LocalDate serviceStartDate, LocalTime serviceStartTime, LocalDate serviceFinishDate ,LocalTime serviceFinishTime) {

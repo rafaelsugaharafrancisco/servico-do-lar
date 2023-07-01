@@ -1,5 +1,6 @@
 package com.br.servicodolar.orderofservice.domain.entity;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,17 +9,40 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
+@Entity
+@Table(name = "order")
 public class Order {
 
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "costumer_id", nullable = false)
     private Long costumerId;
+
+    @Column(name = "service_provider_id", nullable = false)
     private Long serviceProviderId;
+
+    @Column(name = "service_id", nullable = false)
     private Long serviceId;
+
+    @Column(name = "status_order", nullable = false)
+    @Enumerated(value = EnumType.STRING)
     private StatusOrder statusOrder;
+
+    @Column(name = "year", nullable = false, length = 4)
     private Integer year;
+
+    @Column(name = "opening_date", nullable = false)
     private LocalDate openingDate;
+
+    @Column(name = "total_cost", nullable = false)
     private Double totalServiceCost;
+
+    @Embedded
     private Schedule schedule;
+    @Column(name = "updated_date_time")
     private LocalDateTime updatedDateTime;
 
     public void setCostumerId(Long costumerId) {
