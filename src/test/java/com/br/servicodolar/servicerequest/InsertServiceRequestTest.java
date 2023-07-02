@@ -58,7 +58,7 @@ public class InsertServiceRequestTest {
                 .setYear(2023)
                 .setOpeningDate(LocalDate.of(2023, 6, 26))
                 .setTotalServiceCost(1000.20)
-                .setSchedule(new Schedule(LocalDate.now(), LocalTime.of(8,0), LocalDate.now(), LocalTime.of(9,0)))
+                .setSchedule(LocalDate.of(2023, 6, 26), LocalTime.of(8,0), LocalDate.of(2023, 6, 26), LocalTime.of(9,0))
                 .setUpdatedDateTime(LocalDateTime.now());
 
         Mockito.when(orderRepository.findAllByYearAndCostumerId(2023, 1l)).thenReturn(Collections.emptyList());

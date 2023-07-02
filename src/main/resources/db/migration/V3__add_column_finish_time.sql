@@ -1,0 +1,2 @@
+ALTER TABLE orders
+ADD COLUMN finish_time TIME NOT NULL;

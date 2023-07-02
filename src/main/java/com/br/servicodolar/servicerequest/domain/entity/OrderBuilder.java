@@ -2,6 +2,7 @@ package com.br.servicodolar.servicerequest.domain.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class OrderBuilder {
     private Long costumerId;
@@ -49,8 +50,8 @@ public class OrderBuilder {
         return this;
     }
 
-    public OrderBuilder setSchedule(Schedule schedule) {
-        this.schedule = schedule;
+    public OrderBuilder setSchedule(LocalDate serviceStartDate, LocalTime serviceStartTime, LocalDate serviceFinishDate, LocalTime serviceFinishTime) {
+        this.schedule = new Schedule(serviceStartDate, serviceStartTime, serviceFinishDate, serviceFinishTime);
         return this;
     }
 
@@ -62,4 +63,5 @@ public class OrderBuilder {
     public Order createOrder() {
         return new Order(costumerId, serviceProviderId, serviceId, statusOrder, year, openingDate, totalServiceCost, schedule, updatedDateTime);
     }
+
 }

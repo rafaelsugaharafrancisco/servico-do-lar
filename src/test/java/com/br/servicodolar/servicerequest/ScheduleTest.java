@@ -11,6 +11,13 @@ import java.time.LocalTime;
 public class ScheduleTest {
 
     @Test
+    void shouldThrowExceptionWhenDateAndTimeAreNull() {
+
+        Assertions.assertThrows(RuntimeException.class,
+                () ->   new Schedule(null, null, null, null));
+    }
+
+    @Test
     void shouldThrowExceptionWhenDayOfMonthIsSunday() {
 
         Assertions.assertThrows(RuntimeException.class,

@@ -1,14 +1,19 @@
 package com.br.servicodolar.servicerequest.domain.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Negative;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@NoArgsConstructor
 @Table(name = "orders")
 public class Order {
 
@@ -17,6 +22,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Positive(message = "Não pode ser negativo porra!")
     @Column(name = "costumer_id", nullable = false)
     private Long costumerId;
 
@@ -60,7 +66,6 @@ public class Order {
         this.validateYear(year);
         this.validateOpeningDate(openingDate);
         this.validateTotalServiceCost(totalServiceCost);
-        this.validateSchedule(schedule);
         this.validateUpdatedDateTime(updatedDateTime);
         this.costumerId = costumerId;
         this.serviceProviderId = serviceProviderId;
@@ -75,24 +80,33 @@ public class Order {
 
     private void validateCostumerId(Long costumerId) {
 
+        if (costumerId == null)
+            throw new RuntimeException("Código do cliente não pode ser nulo.");
+
         if (costumerId <= 0)
-            throw new RuntimeException("Código do cliente inválido.");
+            throw new RuntimeException("Código do cliente não pode ser menor igual a zero.");
 
         this.costumerId = costumerId;
     }
 
     private void validateServiceProviderId(Long serviceProviderId) {
 
+        if (serviceProviderId == null)
+            throw new RuntimeException("Código do prestador não pode ser nulo.");
+
         if (serviceProviderId <= 0)
-            throw new RuntimeException("Códido do prestador inválido.");
+            throw new RuntimeException("Código do prestador não pode ser menor ou igual a zero.");
 
         this.serviceProviderId = serviceProviderId;
     }
 
     private void validateServiceId(Long serviceId) {
 
+        if (serviceId == null)
+            throw new RuntimeException("Código do serviço não pode ser nulo.");
+
         if (serviceId <= 0)
-            throw new RuntimeException("Código do serviço inválido.");
+            throw new RuntimeException("Código do serviço não pode ser menor ou igual a zero.");
 
         this.serviceId = serviceId;
     }
@@ -105,6 +119,10 @@ public class Order {
     }
 
     private void validateYear(Integer year) {
+
+        if (year == null)
+            throw new RuntimeException("O ano não pode ser nulo.");
+
         if (year <= 0)
             throw new RuntimeException("O valor de ano tem que ser maior igual a zero.");
 
@@ -119,17 +137,14 @@ public class Order {
     }
 
     private void validateTotalServiceCost(Double totalServiceCost) {
+
+        if (totalServiceCost == null)
+            throw new RuntimeException("O custo total do serviço não pode ser nulo");
+
         if (totalServiceCost <= 0)
             throw new RuntimeException("O valor total tem que ser maior igual a zero.");
 
         this.totalServiceCost = totalServiceCost;
-    }
-
-    private void validateSchedule(Schedule schedule) {
-        if (schedule == null)
-            throw new RuntimeException("A agenda não pode ser nulo.");
-
-        this.schedule = schedule;
     }
 
     private void validateUpdatedDateTime(LocalDateTime updatedDateTime) {

@@ -2,6 +2,7 @@ package com.br.servicodolar.servicerequest.controller;
 
 import com.br.servicodolar.servicerequest.usecase.InsertServiceRequest;
 import com.br.servicodolar.servicerequest.usecase.model.OrderDTO;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +23,7 @@ public class ServiceRequestController {
     }
 
     @PostMapping
-    public ResponseEntity registryRequest(@RequestBody OrderDTO body, UriComponentsBuilder builder) {
+    public ResponseEntity registryRequest(@RequestBody @Valid OrderDTO body, UriComponentsBuilder builder) {
         var order = this.insertServiceRequest.execute(body);
 
         URI uri = builder.path("/service-request/{id}").buildAndExpand(order.getServiceId()).toUri();

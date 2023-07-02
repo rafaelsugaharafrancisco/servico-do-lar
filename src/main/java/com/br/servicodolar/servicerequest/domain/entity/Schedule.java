@@ -3,6 +3,7 @@ package com.br.servicodolar.servicerequest.domain.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -10,18 +11,20 @@ import java.time.LocalTime;
 
 @Getter
 @Embeddable
+@NoArgsConstructor
 public class Schedule {
 
     @Column(name = "start_date", nullable = false)
-    private final LocalDate serviceStartDate;
+    private LocalDate serviceStartDate;
     @Column(name = "start_time", nullable = false)
-    private final LocalTime serviceStartTime;
+    private LocalTime serviceStartTime;
     @Column(name = "finish_date", nullable = false)
-    private final LocalDate serviceFinishDate;
+    private LocalDate serviceFinishDate;
     @Column(name = "finish_time", nullable = false)
-    private final LocalTime serviceFinishTime;
+    private LocalTime serviceFinishTime;
 
     public Schedule(LocalDate serviceStartDate, LocalTime serviceStartTime, LocalDate serviceFinishDate ,LocalTime serviceFinishTime) {
+        this.notAllowDateAndTimeNull(serviceStartDate, serviceStartTime, serviceFinishDate ,serviceFinishTime);
         this.notAllowSchedulingWhenStartDateGreaterFinishDate(serviceStartDate, serviceFinishDate);
         this.notAllowSchedulingWhenStartTimeGreaterFinishTime(serviceStartTime, serviceFinishTime);
         this.notAllowSchedulingAtSunday(serviceStartDate);
@@ -30,6 +33,11 @@ public class Schedule {
         this.serviceStartTime = serviceStartTime;
         this.serviceFinishDate = serviceFinishDate;
         this.serviceFinishTime = serviceFinishTime;
+    }
+
+    private void notAllowDateAndTimeNull(LocalDate serviceStartDate, LocalTime serviceStartTime, LocalDate serviceFinishDate, LocalTime serviceFinishTime) {
+        if (serviceStartDate == null || serviceStartTime == null || serviceFinishDate == null || serviceFinishTime == null)
+            throw new RuntimeException("Data e hora invalida.");
     }
 
     private void notAllowSchedulingWhenStartDateGreaterFinishDate(LocalDate serviceStartDate, LocalDate serviceFinishDate) {

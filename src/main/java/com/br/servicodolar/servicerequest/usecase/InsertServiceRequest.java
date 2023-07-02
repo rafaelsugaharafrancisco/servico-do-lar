@@ -6,10 +6,10 @@ import com.br.servicodolar.servicerequest.client.ServiceProviderAPI;
 import com.br.servicodolar.servicerequest.domain.*;
 import com.br.servicodolar.servicerequest.domain.entity.Order;
 import com.br.servicodolar.servicerequest.domain.entity.OrderBuilder;
-import com.br.servicodolar.servicerequest.domain.entity.Schedule;
 import com.br.servicodolar.servicerequest.domain.entity.StatusOrder;
 import com.br.servicodolar.servicerequest.repository.OrderRepository;
 import com.br.servicodolar.servicerequest.usecase.model.OrderDTO;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,7 +20,6 @@ import java.util.List;
 public class InsertServiceRequest {
 
     private CostumerAPI costumerAPI;
-
     private OrderRepository orderRepository;
     private ServiceAPI serviceAPI;
     private ServiceProviderAPI serviceProviderAPI;
@@ -32,6 +31,7 @@ public class InsertServiceRequest {
         this.serviceProviderAPI = serviceProviderAPI;
     }
 
+    @Transactional
     public Order execute(OrderDTO dto) {
 
         validateInAPI(dto);
@@ -71,7 +71,7 @@ public class InsertServiceRequest {
 
     private Order getOrder(OrderDTO dto) {
 
-        double totalCost = new CostCalculator().execute(this.serviceAPI, dto.serviceId());
+        double totalCost = 1000.00;//new CostCalculator().execute(this.serviceAPI, dto.serviceId());
 
         var orderBuilder = new OrderBuilder();
         orderBuilder.setCostumerId(dto.costumerId())
@@ -80,11 +80,12 @@ public class InsertServiceRequest {
                     .setStatusOrder(StatusOrder.ABERTO)
                     .setYear(LocalDate.now().getYear())
                     .setOpeningDate(LocalDate.now())
-                    .setSchedule(new Schedule(dto.serviceStarDate(), dto.serviceStartTime(), dto.serviceFinishDate(), dto.serviceFinishTime()))
+                    .setSchedule(dto.serviceStarDate(), dto.serviceStartTime(), dto.serviceFinishDate(), dto.serviceFinishTime())
                     .setTotalServiceCost(totalCost)
                     .setUpdatedDateTime(LocalDateTime.now());
 
         return orderBuilder.createOrder();
+
     }
 
 }
