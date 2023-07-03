@@ -4,88 +4,79 @@ import com.br.servicodolar.servicerequest.client.CostumerAPI;
 import com.br.servicodolar.servicerequest.client.ServiceAPI;
 import com.br.servicodolar.servicerequest.client.ServiceProviderAPI;
 import com.br.servicodolar.servicerequest.domain.*;
-import com.br.servicodolar.servicerequest.domain.entity.Order;
-import com.br.servicodolar.servicerequest.domain.entity.OrderBuilder;
-import com.br.servicodolar.servicerequest.domain.entity.StatusOrder;
-import com.br.servicodolar.servicerequest.repository.OrderRepository;
-import com.br.servicodolar.servicerequest.usecase.model.OrderDTO;
+import com.br.servicodolar.servicerequest.domain.entity.ServiceRequest;
+import com.br.servicodolar.servicerequest.repository.ServiceRequestRepository;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class InsertServiceRequest {
 
     private CostumerAPI costumerAPI;
-    private OrderRepository orderRepository;
+    private ServiceRequestRepository serviceRequestRepository;
     private ServiceAPI serviceAPI;
     private ServiceProviderAPI serviceProviderAPI;
 
-    public InsertServiceRequest(CostumerAPI costumerAPI, OrderRepository orderRepository, ServiceAPI serviceAPI, ServiceProviderAPI serviceProviderAPI) {
-        this.costumerAPI = costumerAPI;
-        this.orderRepository = orderRepository;
-        this.serviceAPI = serviceAPI;
-        this.serviceProviderAPI = serviceProviderAPI;
-    }
 
     @Transactional
-    public Order execute(OrderDTO dto) {
+    public ServiceRequest execute(ServiceRequest newServiceRequest) {
 
-        validateInAPI(dto);
+        newServiceRequest.getSchedule().validateDateAndTime();
 
-        Order order = getOrder(dto);
+        validateInAPI(newServiceRequest);
 
-        validateInDB(order);
+        validateInDB(newServiceRequest);
 
-        return this.orderRepository.save(order);
+        return this.serviceRequestRepository.save(newServiceRequest);
 
     }
 
-    private void validateInDB(Order order) {
+    private void validateInDB(ServiceRequest serviceRequest) {
         ValidationSchedule validationSchedule = new ValidationScheduleInDB();
 
-        List<Order> orderList = this.orderRepository.findAllByYearAndCostumerId(order.getYear(), order.getCostumerId());
-        ValidationInDB validationInDB = new ValidationInDBForCostumer(orderList);
-        validationInDB.validateIfServiceExistInDataBase(order);
-        validationInDB.validateIfDateTimeOfServiceExistInDB(order, validationSchedule);
+        List<ServiceRequest> serviceRequestList = this.serviceRequestRepository.findAllByYearAndCostumerId(serviceRequest.getYear(), serviceRequest.getCostumerId());
+        ValidationInDB validationInDB = new ValidationInDBForCostumer(serviceRequestList);
+        validationInDB.validateIfServiceExistInDataBase(serviceRequest);
+        validationInDB.validateIfDateTimeOfServiceExistInDB(serviceRequest, validationSchedule);
 
-        orderList = this.orderRepository.findAllByYearAndServiceProviderId(order.getYear(), order.getServiceProviderId());
-        validationInDB = new ValidationInDBForServiceProvider(orderList);
-        validationInDB.validateIfServiceExistInDataBase(order);
-        validationInDB.validateIfDateTimeOfServiceExistInDB(order, validationSchedule);
+        serviceRequestList = this.serviceRequestRepository.findAllByYearAndServiceProviderId(serviceRequest.getYear(), serviceRequest.getServiceProviderId());
+        validationInDB = new ValidationInDBForServiceProvider(serviceRequestList);
+        validationInDB.validateIfServiceExistInDataBase(serviceRequest);
+        validationInDB.validateIfDateTimeOfServiceExistInDB(serviceRequest, validationSchedule);
     }
 
-    private void validateInAPI(OrderDTO dto) {
+    private void validateInAPI(ServiceRequest serviceRequest) {
         ValidationInAPI validationInAPI  = new ValidationInAPIForCostumer(costumerAPI);
-        validationInAPI.validateIfExistWithAPI(dto.costumerId());
+        validationInAPI.validateIfExistWithAPI(serviceRequest.getCostumerId());
 
         validationInAPI = new ValidationInAPIForService(serviceAPI);
-        validationInAPI.validateIfExistWithAPI(dto.serviceId());
+        validationInAPI.validateIfExistWithAPI(serviceRequest.getServiceId());
 
         validationInAPI = new ValidationInAPIForServiceProvider(serviceProviderAPI);
-        validationInAPI.validateIfExistWithAPI(dto.serviceProviderId());
+        validationInAPI.validateIfExistWithAPI(serviceRequest.getServiceProviderId());
     }
 
-    private Order getOrder(OrderDTO dto) {
-
-        double totalCost = 1000.00;//new CostCalculator().execute(this.serviceAPI, dto.serviceId());
-
-        var orderBuilder = new OrderBuilder();
-        orderBuilder.setCostumerId(dto.costumerId())
-                    .setServiceProviderId(dto.serviceProviderId())
-                    .setServiceId(dto.serviceId())
-                    .setStatusOrder(StatusOrder.ABERTO)
-                    .setYear(LocalDate.now().getYear())
-                    .setOpeningDate(LocalDate.now())
-                    .setSchedule(dto.serviceStarDate(), dto.serviceStartTime(), dto.serviceFinishDate(), dto.serviceFinishTime())
-                    .setTotalServiceCost(totalCost)
-                    .setUpdatedDateTime(LocalDateTime.now());
-
-        return orderBuilder.createOrder();
-
-    }
+//    private ServiceRequest getOrder(OrderDTO dto) {
+//
+//        double totalCost = 1000.00;//new CostCalculator().execute(this.serviceAPI, dto.serviceId());
+//
+//        var orderBuilder = new OrderBuilder();
+//        orderBuilder.setCostumerId(dto.costumerId())
+//                    .setServiceProviderId(dto.serviceProviderId())
+//                    .setServiceId(dto.serviceId())
+//                    .setServiceRequestStatus(ServiceRequestStatus.ABERTO)
+//                    .setYear(LocalDate.now().getYear())
+//                    .setOpeningDate(LocalDate.now())
+//                    .setSchedule(dto.serviceStarDate(), dto.serviceStartTime(), dto.serviceFinishDate(), dto.serviceFinishTime())
+//                    .setTotalServiceCost(totalCost)
+//                    .setUpdatedDateTime(LocalDateTime.now());
+//
+//        return orderBuilder.createOrder();
+//
+//    }
 
 }

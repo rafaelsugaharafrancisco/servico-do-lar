@@ -7,4 +7,6 @@ import java.util.List;
 public interface ValidationSchedule {
 
     void validateIfDateAndTimeExist(List<Schedule> scheduleList, Schedule newSchedule);
+
+
 }

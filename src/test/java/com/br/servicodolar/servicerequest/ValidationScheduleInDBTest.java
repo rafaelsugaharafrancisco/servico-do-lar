@@ -3,6 +3,8 @@ package com.br.servicodolar.servicerequest;
 
 import com.br.servicodolar.servicerequest.domain.ValidationScheduleInDB;
 import com.br.servicodolar.servicerequest.domain.entity.Schedule;
+import com.br.servicodolar.servicerequest.domain.entity.ServiceRequest;
+import com.br.servicodolar.servicerequest.domain.entity.ServiceRequestStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,10 +21,14 @@ public class ValidationScheduleInDBTest {
 
     @BeforeEach
     void createScheduleList() {
-        this.newSchedule = new Schedule(LocalDate.of(2023, 6, 26),
-                LocalTime.of(10, 0),
-                LocalDate.of(2023, 6, 26),
-                LocalTime.of(11, 30));
+
+        var schedule = new Schedule();
+        schedule.setServiceStartDate(LocalDate.of(2023, 6, 26));
+        schedule.setServiceStartTime(LocalTime.of(10, 0));
+        schedule.setServiceFinishDate(LocalDate.of(2023, 6, 26));
+        schedule.setServiceFinishTime(LocalTime.of(11,30));
+
+        this.newSchedule = schedule;
 
         this.scheduleList = List.of(this.newSchedule);
     }
@@ -30,20 +36,16 @@ public class ValidationScheduleInDBTest {
     @Test
     void shouldThrowExceptionWhenDateAndTimeServiceAlreadyExists() {
 
-        var newSchedule = new Schedule(LocalDate.of(2023, 6, 26),
-                LocalTime.of(10, 0),
-                LocalDate.of(2023, 6, 26),
-                LocalTime.of(10, 30));
-
         Assertions.assertThrows(RuntimeException.class,
                 () -> new ValidationScheduleInDB().validateIfDateAndTimeExist(this.scheduleList, newSchedule));
 
-        var newSchedule1 = new Schedule(LocalDate.of(2023, 6, 26),
-                LocalTime.of(9, 0),
-                LocalDate.of(2023, 6, 26),
-                LocalTime.of(10, 1));
+        var schedule = new Schedule();
+        schedule.setServiceStartDate(LocalDate.of(2023, 6, 26));
+        schedule.setServiceStartTime(LocalTime.of(9, 0));
+        schedule.setServiceFinishDate(LocalDate.of(2023, 6, 26));
+        schedule.setServiceFinishTime(LocalTime.of(10,30));
 
         Assertions.assertThrows(RuntimeException.class,
-                () -> new ValidationScheduleInDB().validateIfDateAndTimeExist(this.scheduleList, newSchedule1));
+                () -> new ValidationScheduleInDB().validateIfDateAndTimeExist(this.scheduleList, schedule));
     }
 }

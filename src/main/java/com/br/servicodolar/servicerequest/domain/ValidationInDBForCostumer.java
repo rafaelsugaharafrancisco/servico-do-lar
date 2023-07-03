@@ -1,6 +1,6 @@
 package com.br.servicodolar.servicerequest.domain;
 
-import com.br.servicodolar.servicerequest.domain.entity.Order;
+import com.br.servicodolar.servicerequest.domain.entity.ServiceRequest;
 import com.br.servicodolar.servicerequest.domain.entity.Schedule;
 
 import java.util.List;
@@ -8,29 +8,29 @@ import java.util.Optional;
 
 public class ValidationInDBForCostumer implements ValidationInDB {
 
-    private List<Order> orderList;
+    private List<ServiceRequest> serviceRequestList;
 
-    public ValidationInDBForCostumer(List<Order> orderList) {
-        this.orderList = orderList;
+    public ValidationInDBForCostumer(List<ServiceRequest> serviceRequestList) {
+        this.serviceRequestList = serviceRequestList;
     }
 
     @Override
-    public void validateIfServiceExistInDataBase(Order newOrder) {
-        Optional<Order> order = this.orderList.stream().filter(
-                o -> (o.getCostumerId() == newOrder.getCostumerId() &&
-                        o.getServiceId() == newOrder.getServiceId()) &&
-                        o.getOpeningDate().isEqual(newOrder.getOpeningDate())).findFirst();
+    public void validateIfServiceExistInDataBase(ServiceRequest newServiceRequest) {
+        Optional<ServiceRequest> order = this.serviceRequestList.stream().filter(
+                o -> (o.getCostumerId() == newServiceRequest.getCostumerId() &&
+                        o.getServiceId() == newServiceRequest.getServiceId()) &&
+                        o.getOpeningDate().isEqual(newServiceRequest.getOpeningDate())).findFirst();
 
         if (order.isPresent())
             throw new RuntimeException("Já existe um pedido desse serviço para esse cliente.");
     }
 
     @Override
-    public void validateIfDateTimeOfServiceExistInDB(Order newOrder, ValidationSchedule validationSchedule) {
-        List<Schedule> scheduleList = this.orderList.stream()
-                .filter(o -> o.getCostumerId() == newOrder.getCostumerId())
+    public void validateIfDateTimeOfServiceExistInDB(ServiceRequest newServiceRequest, ValidationSchedule validationSchedule) {
+        List<Schedule> scheduleList = this.serviceRequestList.stream()
+                .filter(o -> o.getCostumerId() == newServiceRequest.getCostumerId())
                 .map(order -> order.getSchedule()).toList();
 
-        validationSchedule.validateIfDateAndTimeExist(scheduleList, newOrder.getSchedule());
+        validationSchedule.validateIfDateAndTimeExist(scheduleList, newServiceRequest.getSchedule());
     }
 }

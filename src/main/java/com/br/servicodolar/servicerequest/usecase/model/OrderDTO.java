@@ -1,7 +1,6 @@
 package com.br.servicodolar.servicerequest.usecase.model;
 
-import com.br.servicodolar.servicerequest.domain.entity.StatusOrder;
-import jakarta.validation.constraints.Negative;
+import com.br.servicodolar.servicerequest.domain.entity.ServiceRequestStatus;
 import jakarta.validation.constraints.Positive;
 
 import java.time.LocalDate;
@@ -13,7 +12,7 @@ public record OrderDTO(
         long costumerId,
         long serviceProviderId,
         long serviceId,
-        StatusOrder statusOrder,
+        ServiceRequestStatus serviceRequestStatus,
         LocalDate serviceStarDate,
         LocalTime serviceStartTime,
         LocalDate serviceFinishDate,

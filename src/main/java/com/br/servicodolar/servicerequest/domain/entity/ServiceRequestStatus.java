@@ -1,6 +1,6 @@
 package com.br.servicodolar.servicerequest.domain.entity;
 
-public enum StatusOrder {
+public enum ServiceRequestStatus {
 
     ABERTO,
     INICIADO,

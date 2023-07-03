@@ -1,11 +1,11 @@
 package com.br.servicodolar.servicerequest.domain;
 
-import com.br.servicodolar.servicerequest.domain.entity.Order;
+import com.br.servicodolar.servicerequest.domain.entity.ServiceRequest;
 
 public interface ValidationInDB {
 
-    void validateIfServiceExistInDataBase(Order newOrder);
+    void validateIfServiceExistInDataBase(ServiceRequest newServiceRequest);
 
-    void validateIfDateTimeOfServiceExistInDB(Order newOrder, ValidationSchedule validationSchedule);
+    void validateIfDateTimeOfServiceExistInDB(ServiceRequest newServiceRequest, ValidationSchedule validationSchedule);
 
 }

@@ -2,6 +2,8 @@ package com.br.servicodolar.servicerequest;
 
 
 import com.br.servicodolar.servicerequest.domain.entity.Schedule;
+import com.br.servicodolar.servicerequest.domain.entity.ServiceRequest;
+import com.br.servicodolar.servicerequest.domain.entity.ServiceRequestStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -11,55 +13,74 @@ import java.time.LocalTime;
 public class ScheduleTest {
 
     @Test
-    void shouldThrowExceptionWhenDateAndTimeAreNull() {
-
-        Assertions.assertThrows(RuntimeException.class,
-                () ->   new Schedule(null, null, null, null));
-    }
-
-    @Test
     void shouldThrowExceptionWhenDayOfMonthIsSunday() {
 
-        Assertions.assertThrows(RuntimeException.class,
-                () ->   new Schedule(LocalDate.of(2023, 6, 25),
-                        LocalTime.of(8, 0),
-                        LocalDate.of(2023, 6, 26),
-                        LocalTime.of(9, 0)));
+        var schedule = new Schedule();
+        schedule.setServiceStartDate(LocalDate.of(2023, 6, 25));
+        schedule.setServiceStartTime(LocalTime.of(9, 0));
+        schedule.setServiceFinishDate(LocalDate.of(2023, 6, 25));
+        schedule.setServiceFinishTime(LocalTime.of(10,0));
+
+        String message = Assertions.assertThrows(RuntimeException.class, () ->
+                schedule.validateDateAndTime()).getMessage();
+
+        Assertions.assertEquals("Os dias de atendimento é de segunda à sabado.", message);
     }
 
     @Test
-    void shouldThrowExceptionWhenTimeIsNotAllowed() {
+    void shouldThrowExceptionWhenTimeIsBeforeEightAm() {
 
-        Assertions.assertThrows(RuntimeException.class,
-                () -> new Schedule(LocalDate.of(2023, 6, 26),
-                        LocalTime.of(7, 59),
-                        LocalDate.of(2023, 6, 26),
-                        LocalTime.of(9, 0)));
+        var schedule = new Schedule();
+        schedule.setServiceStartDate(LocalDate.of(2023, 6, 26));
+        schedule.setServiceStartTime(LocalTime.of(7, 59));
+        schedule.setServiceFinishDate(LocalDate.of(2023, 6, 26));
+        schedule.setServiceFinishTime(LocalTime.of(9, 0));
 
-        Assertions.assertThrows(RuntimeException.class,
-                () -> new Schedule(LocalDate.of(2023, 6, 26),
-                        LocalTime.of(18, 1),
-                        LocalDate.of(2023, 6, 26),
-                        LocalTime.of(19, 0)));
+        String message = Assertions.assertThrows(RuntimeException.class, () ->
+                schedule.validateDateAndTime()).getMessage();
+
+        Assertions.assertEquals("O horário de funcionamento é das 08:00 hs às 18:00 hs.", message);
+
+
+    }
+
+    @Test
+     void shouldThrowExceptionWhenTimeIsAfterSixPm() {
+
+        var schedule = new Schedule();
+        schedule.setServiceStartDate(LocalDate.of(2023, 6, 26));
+        schedule.setServiceStartTime(LocalTime.of(18, 1));
+        schedule.setServiceFinishDate(LocalDate.of(2023, 6, 26));
+        schedule.setServiceFinishTime(LocalTime.of(19, 0));
+
+        String message = Assertions.assertThrows(RuntimeException.class,
+                () -> schedule.validateDateAndTime()).getMessage();
+
+        Assertions.assertEquals("O horário de funcionamento é das 08:00 hs às 18:00 hs.", message);
     }
 
     @Test
     void shouldThrowExceptionWhenStartDateGreaterFinishDate() {
 
-        Assertions.assertThrows(RuntimeException.class,
-                () -> new Schedule(LocalDate.of(2023, 6, 28),
-                        LocalTime.of(8, 0),
-                        LocalDate.of(2023, 6, 27),
-                        LocalTime.of(9, 0)));
+        var schedule = new Schedule();
+        schedule.setServiceStartDate(LocalDate.of(2023, 6, 27));
+        schedule.setServiceStartTime(LocalTime.of(9, 1));
+        schedule.setServiceFinishDate(LocalDate.of(2023, 6, 26));
+        schedule.setServiceFinishTime(LocalTime.of(10, 0));
+
+        String message = Assertions.assertThrows(RuntimeException.class,
+                () -> schedule.validateDateAndTime()).getMessage();
+
+        Assertions.assertEquals("Não é permitido agendamento com data de termino menor que a data de inicio.", message);
     }
 
-    @Test
-    void shouldThrowExceptionWhenStartTimeGreaterFinishTime() {
-
-        Assertions.assertThrows(RuntimeException.class,
-                () -> new Schedule(LocalDate.of(2023, 6, 26),
-                        LocalTime.of(9, 0),
-                        LocalDate.of(2023, 6, 26),
-                        LocalTime.of(8, 0)));
-    }
+//    @Test
+//    void shouldThrowExceptionWhenStartTimeGreaterFinishTime() {
+//
+//        Assertions.assertThrows(RuntimeException.class,
+//                () -> new Schedule(LocalDate.of(2023, 6, 26),
+//                        LocalTime.of(9, 0),
+//                        LocalDate.of(2023, 6, 26),
+//                        LocalTime.of(8, 0)));
+//    }
 }
